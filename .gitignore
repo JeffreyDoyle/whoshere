@@ -1,0 +1,8 @@
+.idea/
+
+RemoteServer/node_modules
+
+LocalServer/node_modules
+
+Web/react-redux-starter-kit-master/node_modules
+

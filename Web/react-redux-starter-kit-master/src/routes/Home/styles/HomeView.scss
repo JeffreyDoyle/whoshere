@@ -1,0 +1,98 @@
+
+
+.homeView {
+
+  min-height: 100vh;
+
+  .homeViewWrapper {
+
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(to right, #78CCE4, #0597C1);
+
+    color: white;   //For text.
+    padding: 2rem;
+
+    .title {
+      color: white;
+      font-size: 2rem;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding-top: 3rem;
+
+      .here {
+        color: white;
+
+      }
+    }
+
+    .content {
+
+      padding-top: 2rem;
+      display: flex;
+      justify-content: center;
+
+      position: relative;
+
+      .section {
+        position: absolute;
+
+        transition: left 0.5s ease;
+        left: calc(50vw - 200px - 2rem);
+
+        .sectionContent {
+          position: relative;
+          display: flex;
+          flex-direction: row;
+
+
+          .listInner {
+
+            display: flex;
+            flex-direction: column;
+
+            margin-right: 50vw;
+
+            .itemWrapper {
+
+
+              cursor: pointer;
+
+              margin-top: 1rem;
+              padding: 1rem;
+
+              border-radius: 5px;
+              background-color: white;
+
+              display: flex;
+              justify-content: center;
+
+              width: 400px;
+              min-height: 50px;
+              //height: 600px;
+
+              transition: box-shadow 0.3s;
+
+              &:hover {
+                box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+                // box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+              }
+
+              .address {
+
+                color: black;
+
+              }
+
+            }
+          }
+        }
+      }
+    }
+  }
+
+}
+
