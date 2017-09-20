@@ -16,7 +16,7 @@ function update() {
 
     // Ping the network looking for devices.
     console.log('Scanning network...');
-    var ping = exec("ping 192.168.2.255",{async:true});
+    var ping = exec("ping 192.168.1.255",{async:true});
     setTimeout(() => {
         // After 10 seconds kill the connection and run afterPing.
         ping.kill("SIGINT");

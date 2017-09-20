@@ -5,7 +5,11 @@ const AddressSchema = new Schema({
 	address: {
 		type: String,
 		required: true
-	}
+	},
+	linked: {
+	    type: Boolean,
+        default: false,
+    }
 },
 {
 	timestamps: true // Saves createdAt and updatedAt as dates. createdAt will be our timestamp.
@@ -25,19 +29,28 @@ AddressSchema.statics.getAddresses = function() {
     return addresses;
 };
 
-AddressSchema.statics.setAdresses = function(addresses) {
+AddressSchema.statics.setAddresses = function(addresses) {
     //Delete all existing addresses.
-    this.remove({}, () => {
-        //Add new addresses for each.
-        addresses.map(address => {
-            let _newAddress = new Address({address: address});
-            _newAddress.save(function (err, newAddress) {
-                if (err) return null;
-                // saved!
+    console.log('here with the addresse', addresses);
+
+    addresses.map(address => {
+        this.findOneAndUpdate({address: address}, {address: address, linked: false}, {upsert: true},
+            function(err, address) {
+                console.log('newaddress', address);
             });
-            return null;
-        });
     });
+
+    // this.remove({}, () => {
+    //     //Add new addresses for each.
+    //     addresses.map(address => {
+    //         let _newAddress = new Address({address: address});
+    //         _newAddress.save(function (err, newAddress) {
+    //             if (err) return null;
+    //             // saved!
+    //         });
+    //         return null;
+    //     });
+    // });
 }
 
 

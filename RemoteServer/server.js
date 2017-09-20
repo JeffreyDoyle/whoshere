@@ -27,6 +27,22 @@ mongoose.connect('mongodb://ds125994.mlab.com:25994/whoshere', options, function
 });
 
 
+
+let verifyToken = (token, next) => {
+    //Decode token
+
+    jwt.verify(token, 'this_is_a_test_secret_do_not_use_for_the_love_of_god' , function(err, decoded) {
+        if (err) {
+        	console.log(err);
+            next(null);
+        } else {
+            // if everything is good, save to request for use in other routes
+            next(decoded);
+        }
+    });
+};
+
+
 var router = express.Router();              // get an instance of the express Router
 
 router.get('/', function(req, res) {
@@ -39,7 +55,27 @@ router.post('/auth/login', function(req, res) {
         let address = req.body.address;
         let password = req.body.password;
 
-        res.json({ message: 'Post Succes', address: address, password: password });
+        User.findOne({address: address, password: password},
+            function(err, user) {
+                if (err) return null;
+
+                if (user !== null) {
+                    //Generate Token
+                    let token = jwt.sign({data: user}, 'this_is_a_test_secret_do_not_use_for_the_love_of_god', {
+                        expiresIn: 1440 // expires in 24 hours
+                    });
+
+                    // return the information including token as JSON
+                    res.json({
+                        message: 'Login Successful',
+                        token: token
+                    });
+                } else {
+                    res.json({
+                        message: 'Login Unsuccessful',
+                    });
+                }
+            });
 
 	} catch(e) {
 		console.log('Error: ', e);
@@ -51,19 +87,16 @@ router.post('/auth/create', function(req, res) {
 	try {
 		let firstName = req.body.firstName;
 		let lastName = req.body.lastName;
-		let address = req.body.address;
 		let password = req.body.password;
 
-		User.findOneAndUpdate({address: address}, {address: address, firstName: firstName, lastName: lastName, password: password}, {upsert: true},
+		User.findOneAndUpdate({address: address}, {firstName: firstName, lastName: lastName, password: password}, {upsert: true},
 			function(err, user) {
                 if (err) return null;
 
                 //Generate Token
-                console.log('making token');
                 let token = jwt.sign({data: user}, 'this_is_a_test_secret_do_not_use_for_the_love_of_god', {
                     expiresIn: 1440 // expires in 24 hours
                 });
-                console.log('token made');
 
                 // return the information including token as JSON
                 res.json({
@@ -71,13 +104,142 @@ router.post('/auth/create', function(req, res) {
                     token: token
                 });
             });
-		
+
 	} catch(e) {
 		console.log('Error: ', e);
 		res.json({ message: e });
 	}
 });
 
+router.get('/addresses/getAll', function(req, res) {
+
+    verifyToken(req.headers.token, function(decoded) {
+
+    	req.decoded = decoded;
+    	if (decoded === null) {
+			return res.sendStatus(401);
+		}
+
+        try {
+            Address.find({}, function (err, addresses){
+                if (addresses !== null) {
+                    res.json({
+                        message: 'List of Addresses',
+                        addresses: addresses,
+                    });
+                } else {
+                    res.json({
+                        message: 'No addresses in db',
+                        users: null,
+                    });
+                }
+            });
+
+        } catch(e) {
+            console.log('Error: ', e);
+            res.json({ message: e});
+        }
+	});
+});
+
+router.put('/addresses/link', function(req, res) {
+	verifyToken(req.headers.token, function(decoded) {
+        req.decoded = decoded;
+        if (decoded === null) {
+            return res.sendStatus(401);
+        }
+
+        console.log('adddress', req.body.address, decoded);
+        try {
+            Address.findOne({address: req.body.address}, function (err, address){
+                if (address !== null) {
+                	console.log('adddress', address, decoded);
+                	if (!address.linked) {
+
+                		address.linked = true;
+						address.save(function(err, updatedAddress) {
+
+                            User.findById(decoded.data._id, function(err, user) {
+                                if (err) return null;
+                                if (user !== null) {
+                                	let oldAddress = user.address;
+                                    user.address = req.body.address;
+                                    user.save(function(err, updatedUser) {
+										console.log('updatedUser', updatedUser);
+
+                                        //Get existing linked address and unlink it if not equal the address were setting
+
+                                        Address.findOne({address: oldAddress}, function (err, address) {
+                                            if (err) return null;
+                                            if (address !== null) {
+                                            	if (address.address !== req.body.address) {
+                                                    address.linked = false;
+                                                }
+                                                address.save(function(err, newAddress) {
+                                                    res.json({
+                                                        message: 'Linked successfully',
+                                                        success: true,
+                                                    });
+
+                                                });
+                                            } else {
+                                                res.json({
+                                                    message: 'Linked successfully',
+                                                    success: true,
+                                                });
+											}
+                                        });
+                                    });
+                                } else {
+                                    res.json({
+                                        message: 'Token does not link to a user',
+                                        success: false,
+                                    });
+								}
+                            });
+                        });
+
+					} else if (address.address === req.body.address) {
+                        res.json({
+                            message: 'Address already linked',
+                            success: true,
+                        });
+					} else {
+                        res.json({
+                            message: 'Address already taken',
+                            success: false,
+                        });
+					}
+                } else {
+                    res.json({
+                        message: 'Address doesnt exist',
+                        success: false,
+                    });
+				}
+            });
+
+        } catch(e) {
+            console.log('Error: ', e);
+            res.json({ message: e});
+        }
+	});
+});
+
+router.get('/users/list', function(req, res) {
+    verifyToken(req.headers.token, function(decoded) {
+    	if (decoded === null) {
+            return res.sendStatus(401);
+		}
+
+    	User.find({}, function (err, users){
+    		if (err) return null;
+            res.json({
+                message: 'Heres all the users!',
+                users: users,
+            });
+        });
+	});
+});
 
 
 ioClient.on('connection', function (socket) {
@@ -89,7 +251,7 @@ ioServer.on('connection', function (socket) {
 	// socket connected
 	console.log('Connect established to Local Server');
 	socket.on('update', function(addresses) {
-		// Address.setAddresses(addresses.macList);
+		Address.setAddresses(addresses.macList);
 	});
 });
 
