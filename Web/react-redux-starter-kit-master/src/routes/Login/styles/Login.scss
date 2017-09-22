@@ -3,6 +3,8 @@
 .loginView {
 
   min-height: 100vh;
+  max-width: 100vw;
+  overflow: hidden;
 
   .homeViewWrapper {
 
@@ -12,6 +14,8 @@
 
     color: white;   //For text.
     padding: 2rem;
+
+    transition: background 1s;
 
     .title {
       color: white;
@@ -91,6 +95,85 @@
               }
               .loginButton {
                 color: black;
+              }
+
+            }
+
+            .loginWrapper {
+              cursor: pointer;
+
+              margin-top: 1rem;
+              padding: 1rem;
+
+              border-radius: 5px;
+              background-color: white;
+
+              display: flex;
+              justify-content: center;
+              flex-direction: column;
+
+              width: 400px;
+              min-height: 50px;
+              //height: 600px;
+
+              transition: box-shadow 0.3s;
+
+              &:hover {
+                box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+              }
+
+              .goBack {
+                color: black;
+              }
+
+              .inputField {
+                color: black;
+                margin-top: 1rem;
+                margin-bottom: 1rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                input {
+                  -webkit-appearance:none;
+                  border-radius: 2px;
+                  border-width: 1px;
+                  width: 100%
+                }
+              }
+
+              .actionButtonWrapper {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+
+                .actionButton {
+                  color: black;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  margin-top: 1rem;
+                  margin-bottom: 1rem;
+
+                  width: 100px;
+                  height: 50px;
+
+                  border: 1px solid black;
+                  border-radius: 5px;
+
+                  &:hover {
+                    background-color: black;
+                    color: white;
+                  }
+
+                }
+
+              }
+
+              .errorText {
+
+                color: black;
+
+
               }
 
             }

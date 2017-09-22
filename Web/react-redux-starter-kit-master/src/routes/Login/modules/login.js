@@ -85,6 +85,7 @@ export const doubleAsync = () => {
 export const actions = {
     login,
     createProfile,
+    createProfile,
     getAddresses,
     linkAddress,
 }
