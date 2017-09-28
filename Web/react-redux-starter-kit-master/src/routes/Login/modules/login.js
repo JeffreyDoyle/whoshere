@@ -2,6 +2,7 @@
  * Created by jeffreydoyle on 2017-09-21.
  */
 import axios from 'axios';
+import { browserHistory } from 'react-router';
 
 // ------------------------------------
 // Constants
@@ -17,7 +18,10 @@ export const GET_PROFILE = 'GET_PROFILE';
 // Actions
 // ------------------------------------
 
-export function createProfile(data) {
+
+
+// CREATE PROFILE
+const _createProfile = (data) => {
     let firstName = data.firstName;
     let lastName = data.lastName;
     let password = data.password;
@@ -31,10 +35,17 @@ export function createProfile(data) {
         payload: request
     };
 }
+export const createProfile = data => (dispatch) => {
+    dispatch(_createProfile(data)).then(
+        (response) => {
+            console.log('THUNK RESPONSE => ', response);
+        }
+    );
+}
 
-export function login(data) {
-    let address = data.address;
-    let password = data.password;
+// LOGIN
+const _loginHelper = (address, password) => {
+    console.log('addresspass ', address, password);
     const request = axios.post('/auth/login', {
         address,
         password,
@@ -43,6 +54,19 @@ export function login(data) {
         type: LOGIN,
         payload: request,
     }
+}
+export const login = (adddress, password) => (dispatch) => {
+    dispatch(_loginHelper(adddress, password)).then(
+        (response) => {
+            console.log('THUNK RESPONSE => ', response);
+            if (response.payload.status === 200) {
+                dispatch({type: 'ADD_TOKEN', token: response.payload.data.token});
+                setTimeout(() => {
+                    browserHistory.push('/');
+                }, 1000)
+            }
+        }
+    );
 }
 
 export function getAddresses() {
@@ -118,6 +142,8 @@ const initialState = {
     profile: null,
     address: null,
     addresses: null,
+    loginError: false,
+    signupError: false,
 }
 export default function counterReducer (state = initialState, action) {
     const handler = ACTION_HANDLERS[action.type]

@@ -1,5 +1,6 @@
 import { applyMiddleware, compose, createStore as createReduxStore } from 'redux'
 import thunk from 'redux-thunk'
+import promise from 'redux-promise';
 import axios from 'axios';
 import { browserHistory } from 'react-router'
 import makeRootReducer from './reducers'
@@ -13,7 +14,7 @@ const createStore = (initialState = {}) => {
   // ======================================================
   // Middleware Configuration
   // ======================================================
-  const middleware = [thunk]
+  const middleware = [thunk, promise];
 
   // ======================================================
   // Store Enhancers
@@ -78,7 +79,7 @@ const createStore = (initialState = {}) => {
       // Token has been removed, also remove it from axios and the store.
       if (!cookies.get('whoshere_token') && axios.defaults.headers.common.token !== null && axios.defaults.headers.common.token !== undefined) {
           axios.defaults.headers.common.token = null;
-          store.dispatch({ type: 'REMOVE_TOKEN' });
+          // store.dispatch({ type: 'REMOVE_TOKEN' });
       } else if (state.auth && state.auth.token) {
           axios.defaults.headers.common.token = state.auth.token;
       }

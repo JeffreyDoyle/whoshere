@@ -29,12 +29,9 @@ class Login extends Component {
 
     componentWillMount() {
 
-
-
     }
 
-    update = () => {s
-
+    update = () => {
 
     };
 
@@ -49,6 +46,9 @@ class Login extends Component {
                 selectedSignupError: true,
             });
         } else {
+            this.setState({
+                selectedSignupError: false,
+            });
             this.props.createProfile(address, firstName, lastName, password);
         }
     }
@@ -57,13 +57,16 @@ class Login extends Component {
         let address = document.getElementById('signin-macaddress').value;
         let password = document.getElementById('signin-password').value;
 
-        console.log('signin', address === '', password === '');
+        console.log('signin', address === '', password === '', address, password);
 
         if (address === '' || address === null || password === '' || password === null) {
             this.setState({
                 selectedLoginError: true,
             });
         } else {
+            this.setState({
+                selectedLoginError: false,
+            });
             this.props.login(address, password);
         }
     }
@@ -149,6 +152,7 @@ class Login extends Component {
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
 
                             </div>
