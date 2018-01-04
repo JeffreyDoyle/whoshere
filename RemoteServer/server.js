@@ -30,7 +30,6 @@ mongoose.connect('mongodb://ds125994.mlab.com:25994/whoshere', options, function
 
 let verifyToken = (token, next) => {
     //Decode token
-
     jwt.verify(token, 'this_is_a_test_secret_do_not_use_for_the_love_of_god' , function(err, decoded) {
         if (err) {
         	console.log(err);
@@ -51,6 +50,7 @@ router.get('/', function(req, res) {
 
 router.post('/auth/login', function(req, res) {
 
+    console.log('logging in');
 	try {
         let address = req.body.address;
         let password = req.body.password;
@@ -71,9 +71,10 @@ router.post('/auth/login', function(req, res) {
                         token: token
                     });
                 } else {
-                    res.json({
-                        message: 'Login Unsuccessful',
-                    });
+                    res.sendStatus(401);
+                    // res.json({
+                    //     message: 'Login Unsuccessful',
+                    // });
                 }
             });
 
@@ -88,11 +89,15 @@ router.post('/auth/create', function(req, res) {
 		let firstName = req.body.firstName;
 		let lastName = req.body.lastName;
 		let password = req.body.password;
+		let address = req.body.address;
 
-		User.findOneAndUpdate({address: address}, {firstName: firstName, lastName: lastName, password: password}, {upsert: true},
+		console.log(req.body);
+
+		User.findOneAndUpdate({address: address}, {firstName: firstName, lastName: lastName, password: password, address: address}, {upsert: true},
 			function(err, user) {
                 if (err) return null;
 
+                console.log("new user " + firstName + " " + lastName + " " + password + " " + address);
                 //Generate Token
                 let token = jwt.sign({data: user}, 'this_is_a_test_secret_do_not_use_for_the_love_of_god', {
                     expiresIn: 1440 // expires in 24 hours
@@ -255,5 +260,19 @@ ioServer.on('connection', function (socket) {
 	});
 });
 
+// Add headers
+app.use(function (req, res, next) {
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    // Pass to next layer of middleware
+    next();
+});
 app.use('/', router);
 app.listen(8082);

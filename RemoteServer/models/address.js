@@ -31,12 +31,12 @@ AddressSchema.statics.getAddresses = function() {
 
 AddressSchema.statics.setAddresses = function(addresses) {
     //Delete all existing addresses.
-    console.log('here with the addresse', addresses);
+    // console.log('here with the addresse', addresses);
 
     addresses.map(address => {
         this.findOneAndUpdate({address: address}, {address: address, linked: false}, {upsert: true},
             function(err, address) {
-                console.log('newaddress', address);
+                // console.log('newaddress', address);
             });
     });
 
