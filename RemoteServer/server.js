@@ -93,7 +93,7 @@ router.post('/auth/create', function(req, res) {
 
 		console.log(req.body);
 
-		User.findOneAndUpdate({address: address}, {firstName: firstName, lastName: lastName, password: password, address: address}, {upsert: true},
+		User.findOneAndUpdate({address: address}, {firstName: firstName, lastName: lastName, password: password, address: address, online: true}, {upsert: true},
 			function(err, user) {
                 if (err) return null;
 
@@ -246,6 +246,38 @@ router.get('/users/list', function(req, res) {
 	});
 });
 
+router.get('/users/online', function (req, res) {
+    verifyToken(req.headers.token, function(decoded) {
+        if (decoded === null) {
+            return res.sendStatus(401);
+        }
+
+        User.find({online: true}, function (err, users){
+            if (err) return null;
+
+            res.json({
+                message: 'Heres all the online users!',
+                users: users,
+            });
+        });
+
+    });
+});
+
+router.get('/users/me', function(req, res) {
+    verifyToken(req.headers.token, function(decoded) {
+        if (decoded === null) {
+            return res.sendStatus(401);
+        }
+
+        res.json({
+            address: decoded.data.address,
+            firstName: decoded.data.firstName,
+            lastName: decoded.data.lastName
+        });
+        console.log(decoded);
+    });
+});
 
 ioClient.on('connection', function (socket) {
 	// socket connected
@@ -257,6 +289,7 @@ ioServer.on('connection', function (socket) {
 	console.log('Connect established to Local Server');
 	socket.on('update', function(addresses) {
 		Address.setAddresses(addresses.macList);
+		User.toggleOnline(addresses.macList);
 	});
 });
 
