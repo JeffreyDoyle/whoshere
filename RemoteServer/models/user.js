@@ -13,6 +13,9 @@ const UserSchema = new Schema({
     },
     password: {
         type: String,
+    },
+    online: {
+	    type: Boolean,
     }
 });
 
@@ -30,7 +33,7 @@ UserSchema.statics.getUsers = function() {
 
 
 UserSchema.statics.newUser = function(address, firstName, lastName, password) {
-    let newUser = new UserSchema({address: address, firstName: firstName, lastName: lastName, password: password})
+    let newUser = new UserSchema({address: address, firstName: firstName, lastName: lastName, password: password, online: true});
     newUser.save(function(err, user) {
         console.log('newUser');
     });
@@ -52,6 +55,38 @@ UserSchema.statics.updateUser = function(id, address, firstName, lastName, locat
             }
             return null;
         });
+    });
+};
+
+UserSchema.statics.toggleOnline = function(addresses) {
+
+    let context = this;
+
+    console.log('toggle online', addresses);
+
+    this.find({}, function (err, users) {
+        if (!err) {
+
+            users.map((user) => {
+                if (addresses.includes(user.address)) {
+                    context.findOneAndUpdate({address: user.address}, {online: true}, {upsert: true},
+                        function(err, user) {
+                            if (err) return null;
+
+                        });
+                } else {
+                    context.findOneAndUpdate({address: user.address}, {online: false}, {upsert: true},
+                        function(err, user) {
+                            if (err) return null;
+
+                        });
+                }
+            });
+
+            return users;
+        } else {
+            return null;
+        }
     });
 };
 
