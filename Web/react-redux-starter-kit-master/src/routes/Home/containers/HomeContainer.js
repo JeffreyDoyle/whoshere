@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-// import { increment, doubleAsync } from '../modules/counter'
+import { getUser, getOnline } from '../modules/home'
 
 /*  This is a container component. Notice it does not contain any JSX,
  nor does it import React. This component is **only** responsible for
@@ -13,9 +13,13 @@ import Home from '../components/HomeView'
  implementing our wrapper around increment; the component doesn't care   */
 
 const mapDispatchToProps = {
+    getUser : () => getUser(),
+    getOnline: () => getOnline(),
 }
 
 const mapStateToProps = (state) => ({
+    user: state.home.user,
+    online: state.home.online
 })
 
 /*  Note: mapStateToProps is where you should use `reselect` to create selectors, ie:

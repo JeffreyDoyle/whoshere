@@ -18,6 +18,10 @@ export default (state = initialState, action) => {
             }
 
         case ADD_TOKEN:
+
+            const cookies = new Cookies();
+            cookies.set('whoshere_token', action.token);
+
             return {
                 ...state,
                 open: false,

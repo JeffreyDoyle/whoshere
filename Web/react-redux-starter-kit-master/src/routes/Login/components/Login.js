@@ -36,10 +36,12 @@ class Login extends Component {
     };
 
     signUp = () => {
-        let adddress = document.getElementById('signup-macaddress').value;
+        let address = document.getElementById('signup-macaddress').value;
         let firstName = document.getElementById('signup-firstname').value;
         let lastName = document.getElementById('signup-lastname').value;
         let password = document.getElementById('signup-password').value;
+
+        console.log(address, firstName, lastName, password);
 
         if (address === '' || address === null || password === '' || password === null || firstName === '' || firstName === null || lastName === '' || lastName === null) {
             this.setState({

@@ -75,12 +75,15 @@ const createStore = (initialState = {}) => {
   axios.defaults.baseURL = URL;
   function listener() {
       const state = store.getState();
-      // console.log('listener ', cookies.get('vrify_webapp_token'), (!cookies.get('vrify_webapp_token') && axios.defaults.headers.common.token !== null && axios.defaults.headers.common.token !== undefined ));
       // Token has been removed, also remove it from axios and the store.
       if (!cookies.get('whoshere_token') && axios.defaults.headers.common.token !== null && axios.defaults.headers.common.token !== undefined) {
           axios.defaults.headers.common.token = null;
           // store.dispatch({ type: 'REMOVE_TOKEN' });
+
       } else if (state.auth && state.auth.token) {
+
+          console.log('setting token', state.auth.token);
+
           axios.defaults.headers.common.token = state.auth.token;
       }
 
@@ -95,6 +98,8 @@ const createStore = (initialState = {}) => {
   if (token) {
       console.log('adding token to axios', token);
       axios.defaults.headers.common.token = token;
+  } else {
+      browserHistory.push('/login');
   }
 
   if (_applicationStore === null) {

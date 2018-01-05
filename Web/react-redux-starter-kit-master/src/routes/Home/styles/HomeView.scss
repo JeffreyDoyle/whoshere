@@ -21,12 +21,24 @@
       justify-content: center;
       align-items: center;
 
-      padding-top: 3rem;
+      padding-top: 1rem;
 
       .here {
         color: white;
 
       }
+    }
+
+    .welcome {
+      color: white;
+      font-size: 1rem;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding-top: 3rem;
+
     }
 
     .content {
@@ -37,57 +49,47 @@
 
       position: relative;
 
-      .section {
-        position: absolute;
+      .sectionContent {
+        position: relative;
+        display: flex;
+        flex-direction: row;
 
-        transition: left 0.5s ease;
-        left: calc(50vw - 200px - 2rem);
+        .listInner {
 
-        .sectionContent {
-          position: relative;
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
+          text-align: center;
 
+          .itemWrapper {
 
-          .listInner {
+            cursor: pointer;
+
+            margin-top: 1rem;
+            padding: 1rem;
+
+            border-radius: 5px;
+            background-color: white;
 
             display: flex;
-            flex-direction: column;
+            justify-content: center;
 
-            margin-right: 50vw;
+            width: 400px;
+            min-height: 50px;
+            //height: 600px;
 
-            .itemWrapper {
+            transition: box-shadow 0.3s;
 
+            &:hover {
+              box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+              // box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+            }
 
-              cursor: pointer;
+            .address {
 
-              margin-top: 1rem;
-              padding: 1rem;
-
-              border-radius: 5px;
-              background-color: white;
-
-              display: flex;
-              justify-content: center;
-
-              width: 400px;
-              min-height: 50px;
-              //height: 600px;
-
-              transition: box-shadow 0.3s;
-
-              &:hover {
-                box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-                // box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-              }
-
-              .address {
-
-                color: black;
-
-              }
+              color: black;
 
             }
+
           }
         }
       }

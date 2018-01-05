@@ -21,24 +21,29 @@ export const GET_PROFILE = 'GET_PROFILE';
 
 
 // CREATE PROFILE
-const _createProfile = (data) => {
-    let firstName = data.firstName;
-    let lastName = data.lastName;
-    let password = data.password;
+const _createProfile = (address, firstName, lastName, password) => {
     const request = axios.post('/auth/create', {
-        firstName,
-        lastName,
-        password,
+        firstName: firstName,
+        lastName: lastName,
+        password: password,
+        address: address,
     });
     return {
         type: CREATE_PROFILE,
         payload: request
     };
 }
-export const createProfile = data => (dispatch) => {
-    dispatch(_createProfile(data)).then(
+export const createProfile = (address, firstName, lastName, password) => (dispatch) => {
+    dispatch(_createProfile(address, firstName, lastName, password)).then(
         (response) => {
             console.log('THUNK RESPONSE => ', response);
+            if (response.payload.status === 200) {
+                dispatch({type: 'ADD_TOKEN', token: response.payload.data.token});
+                setTimeout(() => {
+                    console.log('apple');
+                    browserHistory.push('/');
+                }, 1000)
+            }
         }
     );
 }
@@ -62,6 +67,7 @@ export const login = (adddress, password) => (dispatch) => {
             if (response.payload.status === 200) {
                 dispatch({type: 'ADD_TOKEN', token: response.payload.data.token});
                 setTimeout(() => {
+                    console.log('apple');
                     browserHistory.push('/');
                 }, 1000)
             }

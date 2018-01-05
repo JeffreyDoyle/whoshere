@@ -29,14 +29,22 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            macList: ['1', '2'],
+            onlineUsers: [{
+                firstName: "Jeff",
+                lastName: "Doyle",
+                address: "1:2:3:4",
+                online: true
+            }],
             selectedMac: null,
         };
         socket.on('update', this.update);
     }
 
     componentWillMount() {
+        this.props.getUser();
+        this.props.getOnline();
 
+        setInterval(this.props.getOnline, 5000);
     }
 
     update = (newMacList) => {
@@ -46,48 +54,40 @@ class Home extends Component {
         }, function() {console.log('newMacList', this.state)});
     };
 
-
     render() {
-        console.log('rerender');
+
         return (
             <div className="homeView">
                 <div className="homeViewWrapper">
                     <div className="title">
                         whos<div className="here">here</div>
                     </div>
+                    <div className="welcome">
+                        {this.props.user != null ? "Welcome, " + this.props.user.firstName : ""}
+                    </div>
                     <div className="content">
-                        <div className="section" style={this.state.selectedMac === null ? {} : {left: 'calc(-50vw - 200px)'}}>
 
                             <div className="sectionContent">
 
                                 <div className="listInner">
+                                    Heres who's currently online
                                     {
-                                        this.state.macList.map(mac => {
+                                        this.props.online ? this.props.online.map(user => {
                                             return (
-                                                    <div className="itemWrapper" onClick={() => {this.setState({selectedMac: mac});}}>
+                                                    <div className="itemWrapper">
                                                         <div className="address">
-                                                            {mac}
+                                                            {user.firstName} {user.lastName}
                                                         </div>
                                                     </div>
                                                 )
                                             }
                                         )
+                                        :
+                                        null
                                     }
                                 </div>
 
-
-                                <div className="listInner">
-
-                                    <div className="itemWrapper" onClick={() => {this.setState({selectedMac: null});}}>
-                                        <div className="address">
-                                            {this.state.selectedMac}
-                                        </div>
-                                    </div>
-
-                                </div>
-
                             </div>
-                        </div>
 
                     </div>
                 </div>

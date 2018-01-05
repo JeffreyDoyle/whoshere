@@ -7,7 +7,12 @@
 // ------------------------------------
 // Constants
 // ------------------------------------
+import axios from 'axios';
+import { browserHistory } from 'react-router';
+
 export const GET_USERS = 'GET_ADDRESSES';
+export const GET_USER = 'GET_USER';
+export const GET_ONLINE = 'GET_ONLINE';
 
 // ------------------------------------
 // Actions
@@ -30,6 +35,21 @@ export function login (data) {
     };
 }
 
+export function getUser () {
+    const request = axios.get('/users/me');
+    return {
+        type: GET_USER,
+        payload: request
+    };
+}
+
+export function getOnline () {
+    const request = axios.get('/users/online');
+    return {
+        type: GET_ONLINE,
+        payload: request
+    };
+}
 
 
 /*  This is a thunk, meaning it is a function that immediately
@@ -52,21 +72,36 @@ export const doubleAsync = () => {
 
 export const actions = {
     login,
-    doubleAsync
+    doubleAsync,
+    getUser,
+    getOnline
 }
 
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-    [COUNTER_INCREMENT]    : (state, action) => state + action.payload,
-    [COUNTER_DOUBLE_ASYNC] : (state, action) => state * 2
+    [GET_USER]    : (state, action) => ({
+        ...state,
+        user: {
+            firstName: action.payload.data.firstName,
+            lastName: action.payload.data.firstName,
+            address: action.payload.data.firstName,
+        }
+    }),
+    [GET_ONLINE]    : (state, action) => ({
+        ...state,
+        online: action.payload.data.users
+    }),
 }
 
 // ------------------------------------
 // Reducer
 // ------------------------------------
-const initialState = 0
+const initialState = {
+    user: null,
+    online: [],
+}
 export default function counterReducer (state = initialState, action) {
     const handler = ACTION_HANDLERS[action.type]
 
